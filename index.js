@@ -6,6 +6,7 @@ const { default: mongoose } = require('mongoose');
 const app = express();
 const port = process.env.PORT || 5000;
 require('dotenv').config();
+const authRoute = require ('./Routes/auth.js');
 
 const corsOptions = {
     origin: true,
@@ -15,6 +16,7 @@ const corsOptions = {
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors(corsOptions));
+app.use('/api/v1/auth', authRoute);
 
 // MongoBD Connection
 mongoose.set('strictQuery', false)
