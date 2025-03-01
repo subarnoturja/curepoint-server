@@ -3,6 +3,12 @@ const Doctor= require ('../models/DoctorSchema')
 const jwt = require ('jsonwebtoken') 
 const bcrypt = require ('bcryptjs')
 
+const generateToken = user => {
+    return jwt.sign({id:user._id, role: user.role}, process.env.JWT_SECRET, {
+        expiresIn: '2h',
+    })
+}
+
 // Register
 const register = async (req, res) => {
     const { email, password, name, role, photo, gender } = req.body;
@@ -17,7 +23,7 @@ const register = async (req, res) => {
 
         // Check if user exist
         if(user) {
-            return res.status(400).json({ message: "user already exist" })
+            return res.status(400).json({ message: "User Already Exist" })
         }
         // Hash Password
         const salt = await bcrypt.genSalt(10)
@@ -54,10 +60,33 @@ const register = async (req, res) => {
 
 // Login 
 const login = async (req, res) => {
+    const { email } = req.body;
     try {
-        
+        let user = null;
+        const patient = await User.findOne({email});
+        const doctor = await Doctor.findOne({email});
+        if(patient){
+            user = patient
+        }
+        if(doctor) {
+            user = doctor;
+        }
+        // check if user exist or not
+        if(!user){
+            return res.status(404).json({ message: "User Not Found" })
+        }
+        // compare password
+        const isPasswordMatch = await bcrypt.compare(req.body.password, user.password);
+        if(!isPasswordMatch){
+            return res.status(400).json({ status: false, message: "Invalid credentials"});
+        }
+        // get token
+        const token = generateToken(user)
+
+        const {password, role, appointment, ...rest} = user._doc
+        res.status(200).json({ status: true, message: "Successfully Logged In", token, data: {...rest}, role });
     } catch (error) {
-        
+        res.status(500).json({ status: false, message: "Failed to Login"});
     }
 }
 
