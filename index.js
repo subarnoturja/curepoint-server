@@ -7,6 +7,7 @@ const port = process.env.PORT || 5000;
 require('dotenv').config();
 const authRoute = require ('./Routes/auth.js');
 const userRoute = require ('./Routes/user.js');
+const doctorRoute = require ('./Routes/doctor.js');
 
 const corsOptions = {
     origin: true,
@@ -18,6 +19,7 @@ app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/users', userRoute);
+app.use('/api/v1/doctors', doctorRoute);
 
 // MongoBD Connection
 mongoose.set('strictQuery', false)
