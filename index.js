@@ -8,6 +8,7 @@ require('dotenv').config();
 const authRoute = require ('./Routes/auth.js');
 const userRoute = require ('./Routes/user.js');
 const doctorRoute = require ('./Routes/doctor.js');
+const reviewRoute = require ('./Routes/review.js');
 
 const corsOptions = {
     origin: true,
@@ -20,6 +21,7 @@ app.use(cors(corsOptions));
 app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/users', userRoute);
 app.use('/api/v1/doctors', doctorRoute);
+app.use('/api/v1/reviews', reviewRoute);
 
 // MongoBD Connection
 mongoose.set('strictQuery', false)

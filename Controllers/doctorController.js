@@ -35,7 +35,9 @@ const deleteDoctor = async (req, res) => {
 const getSingleDoctor = async (req, res) => {
   const id = req.params.id;
   try {
-    const doctor = await Doctor.findById(id).select("-password");
+    const doctor = await Doctor.findById(id)
+      .populate("reviews")
+      .select("-password");
     res
       .status(200)
       .json({ success: true, message: "Doctor Found", data: doctor });
@@ -55,7 +57,7 @@ const getAllDoctor = async (req, res) => {
           { name: { $regex: query, $options: "i" } },
           { specialization: { $regex: query, $options: "i" } },
         ],
-      }).select('-password');
+      }).select("-password");
     } else {
       const doctors = await Doctor.find({ isApproved: "approved" }).select(
         "-password"
