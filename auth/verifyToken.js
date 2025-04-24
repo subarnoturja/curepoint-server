@@ -7,7 +7,7 @@ const authenticate = async(req, res, next) => {
     const authToken = req.headers.authorization
 
     // check token is exists
-    if(!authToken || !authToken.startsWith('Bearer')){
+    if(!authToken || !authToken.startsWith('Bearer ')){
         return res.status(401).json({ success: false, message: "No token, authorization denied" })
     }
 
@@ -15,7 +15,7 @@ const authenticate = async(req, res, next) => {
         const token = authToken.split(' ')[1];
         // verify token
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        req.userId = decoded.userId
+        req.userId = decoded.id
         req.role = decoded.role
 
         next(); // must be call the next function
