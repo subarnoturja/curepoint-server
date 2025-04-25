@@ -1,5 +1,5 @@
 const jwt = require ('jsonwebtoken') 
-const Doctor = require("../models/BookingSchema");
+const Doctor = require("../models/DoctorSchema");
 const User = require("../models/UserSchema");
 
 const authenticate = async(req, res, next) => {
@@ -31,8 +31,9 @@ const restrict = roles => async(req, res, next) => {
     const userId = req.userId;
     let user;
 
-    const patient = await User.findById(userId)
-    const doctor = await Doctor.findById(userId)
+    try {
+        const patient = await User.findById(userId)
+        const doctor = await Doctor.findById(userId)
 
     if(patient) {
         user = patient
@@ -42,11 +43,19 @@ const restrict = roles => async(req, res, next) => {
         user = doctor
     }
 
+    if (!user) {
+        return res.status(404).json({ success: false, message: "User not found" });
+    }
+
     if(!roles.includes(user.role)){
-        return res.status(401).json({ success: false, message: "You are not authorized" })
+        return res.status(403).json({ success: false, message: "You are not authorized" })
     }
 
     next();
+    } catch (error) {
+        console.error("Restrict middleware error:", error);
+        return res.status(500).json({ success: false, message: "Internal server error" }); 
+    }
 }
 
 module.exports = { authenticate, restrict };
