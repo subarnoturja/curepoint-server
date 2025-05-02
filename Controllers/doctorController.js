@@ -60,7 +60,7 @@ const getAllDoctor = async (req, res) => {
         ],
       }).select("-password");
     } else {
-      const doctors = await Doctor.find({ isApproved: "approved" }).select(
+        doctors = await Doctor.find({ isApproved: "approved" }).select(
         "-password"
       );
     }
